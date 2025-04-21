@@ -1,7 +1,7 @@
 <div class="flights-container">
     <mat-card appearance="outlined" class="card-type-1">
 
-    @if(appStateService.getFlightsList().length == 0){
+    @if(appStateService.flightsList().length == 0){
         <div class="select-worker-tag">
             <i class="pi pi-sparkles"></i> Select a worker
           </div>
@@ -10,45 +10,22 @@
     @else{
 
         <div class="countdown-text">
-            Refreshing in {{ appStateService.getCountdown() }} sec.
+            Refreshing in {{ appStateService.countdown() }} sec.
           </div>
           
         <div class="table-container">
-            <table mat-table [dataSource]="appStateService.getFlightsList()">
-              <!-- Flight Number Column -->
-              <ng-container matColumnDef="num">
-                <th mat-header-cell *matHeaderCellDef> Flight Number </th>
-                <td mat-cell *matCellDef="let flight"> {{flight.num}} </td>
-              </ng-container>
-    
-              <!-- Origin Column -->
-              <ng-container matColumnDef="from">
-                <th mat-header-cell *matHeaderCellDef> Origin </th>
-                <td mat-cell *matCellDef="let flight"> {{flight.from}} </td>
-              </ng-container>
-    
-              <!-- Origin Date Column -->
-              <ng-container matColumnDef="from_date">
-                <th mat-header-cell *matHeaderCellDef> Origin Date </th>
-                <td mat-cell *matCellDef="let flight"> {{flight.from_date}} </td>
-              </ng-container>
-    
-              <!-- Destination Column -->
-              <ng-container matColumnDef="to">
-                <th mat-header-cell *matHeaderCellDef> Destination </th>
-                <td mat-cell *matCellDef="let flight"> {{flight.to}} </td>
-              </ng-container>
-    
-              <!-- Destination Date Column -->
-              <ng-container matColumnDef="to_date">
-                <th mat-header-cell *matHeaderCellDef> Destination Date </th>
-                <td mat-cell *matCellDef="let flight"> {{flight.to_date}} </td>
-              </ng-container>
+            <table mat-table [dataSource]="appStateService.flightsList()">
+               @for ( item of columnDefs(); track item.name){
+                <ng-container matColumnDef="{{item.name}}">
+                  <th mat-header-cell *matHeaderCellDef> {{item.label}} </th>
+                  <td mat-cell *matCellDef="let flight"> {{flight[item.name]}} </td>
+                </ng-container>
+               }
     
               <!-- Header + Row Rendering -->
-              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="selectRow(row)"
-                  [class.selected]="row === appStateService.getSelectedFlight()">
+              <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns()" (click)="selectRow(row)"
+                  [class.selected]="row === appStateService.selectedFlight()">
               </tr>
             </table>
     </div>

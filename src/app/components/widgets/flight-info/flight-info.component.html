@@ -1,20 +1,23 @@
-<div class="boarding-pass" *ngIf="appStateService.getSelectedFlight() as selectedFlight">
-    <header>
-        <img src="../../../../assets/QuestLogo.png" alt="logo" class="logo">
-        <div class="flight">
-            <small>Plane Number</small>
-            <strong>{{selectedFlight.plane}}</strong>
+@let flight = appStateService.selectedFlight();
+@if (flight) {
+  <div class="boarding-pass">
+      <header>
+          <img src="../../../../assets/QuestLogo.png" alt="logo" class="logo">
+          <div class="flight">
+              <small>Plane Number</small>
+              <strong>{{ flight.plane }}</strong>
+
         </div>
     </header>
     <section class="cities">
         <div class="city strap">
             <small>FROM</small>
-            <strong>{{selectedFlight.from}}</strong>
+            <strong>{{flight?.from}}</strong>
         </div>
         <div class="city strap">
             <small>TO</small>
 
-            <strong>{{selectedFlight.to}}</strong>
+            <strong>{{flight?.to}}</strong>
         </div>
         <svg class="airplane">
             <use xlink:href="#airplane"></use>
@@ -24,14 +27,14 @@
         <div class="f-gate">
             <div class="box">
                 <small>FROM GATE</small>
-                <strong><em>{{ selectedFlight.from_gate }}</em></strong>
+                <strong><em>{{ flight?.from_gate }}</em></strong>
             </div>
 
         </div>
         <div class="t-gate">
             <div class="box">
                 <small>TO GATE</small>
-                <strong>{{ selectedFlight.to_gate }}</strong>
+                <strong>{{ flight?.to_gate }}</strong>
             </div>
         </div>
     </section>
@@ -39,7 +42,7 @@
         <div class="box">
             <div>
                 <small>duration</small>
-                <strong>{{ selectedFlight.duration | duration }}</strong>
+                <strong>{{ flight?.duration | duration }}</strong>
             </div>
         </div>
         <div class="qrcode">
@@ -60,3 +63,4 @@
         </g>
     </symbol>
 </svg>
+}

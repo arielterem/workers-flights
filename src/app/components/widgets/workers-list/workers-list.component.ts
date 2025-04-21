@@ -1,41 +1,50 @@
-import { Component, OnInit } from '@angular/core';
-import { PullDataService } from '../../../services/pull-data.service';
+import {
+  Component,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
 import { IWorker } from '../../../interfaces/worker.interface';
-import { MatListModule } from '@angular/material/list';
-import { CommonModule } from '@angular/common';
 import { AppStateService } from '../../../services/app-state.service';
+import { PullDataService } from '../../../services/pull-data.service';
+import { Subscription } from 'rxjs';
+import { effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-workers-list',
+  standalone: true,
   imports: [CommonModule, MatListModule, MatCardModule],
   templateUrl: './workers-list.component.html',
-  styleUrl: './workers-list.component.scss'
+  styleUrls: ['./workers-list.component.scss']
 })
-export class WorkersListComponent implements OnInit {
+export class WorkersListComponent implements OnInit, OnDestroy {
 
-  workersList: IWorker[] = []
+  workersList: IWorker[] = [];
+  private refreshSub: Subscription | null = null;
 
   constructor(
-    private pullDataService: PullDataService,
-    public appStateService: AppStateService
-  ) { }
+    public appStateService: AppStateService,
+    private pullDataService: PullDataService
+  ) {}
 
   ngOnInit(): void {
-    console.log('here');
-    this.pullDataService.getWorkersList().subscribe({
-      next: (res) => {
-        this.workersList = res
-        console.log(this.workersList);
-      },
-      error(err) {
-        console.log(err);
-      },
-    })
+    this.loadWorkers();
   }
 
-  onSelectWorker(workerID: number) {
-    this.appStateService.setSelectedWorkerID(workerID)
+  ngOnDestroy(): void {
+    this.refreshSub?.unsubscribe();
   }
-  
+
+  loadWorkers(): void {
+    this.pullDataService.getWorkersList().subscribe({
+      next: (res) => this.workersList = res,
+      error: (err) => console.error(err)
+    });
+  }
+
+  onSelectWorker(id: number): void {
+    this.appStateService.setSelectedWorkerID(id);
+  }
 }

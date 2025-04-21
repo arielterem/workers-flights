@@ -13,6 +13,7 @@ import { DurationPipe } from '../../../pipes/duration.pipe';
 })
 export class FlightInfoComponent {
 
-  constructor(public appStateService: AppStateService) {}
+  constructor(public appStateService: AppStateService) { }
+
 
 }

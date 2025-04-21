@@ -1,6 +1,7 @@
-import { Injectable, Signal, signal, effect } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { IFlight } from '../interfaces/flight.interface';
 import { PullDataService } from './pull-data.service';
+import { Subscription, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,90 +9,80 @@ import { PullDataService } from './pull-data.service';
 export class AppStateService {
   constructor(private pullDataService: PullDataService) {}
 
-  private selectedWorkerID = signal<number | null>(null);
-  private flightsList = signal<IFlight[]>([]);
-  private selectedFlight = signal<IFlight | null>(null);
+  // Internal signals
+  private _selectedWorkerID = signal<number | null>(null);
+  private _flightsList = signal<IFlight[]>([]);
+  private _selectedFlight = signal<IFlight | null>(null);
+  private _countdown = signal<number>(60); // Start countdown at 60 seconds
 
-  private countdown = signal<number>(0);
-  private timerRef: any = null;
+  // Exposed computed signals
+  readonly selectedWorkerID = computed(() => this._selectedWorkerID());
+  readonly flightsList = computed(() => this._flightsList());
+  readonly selectedFlight = computed(() => this._selectedFlight());
+  readonly countdown = computed(() => this._countdown());
 
-  /** Called when user selects a worker */
+  private _refreshSub: Subscription | null = null;
+  private _countdownSub: Subscription | null = null;
+
+  /** Sets the selected worker and starts auto-refresh */
   setSelectedWorkerID(id: number): void {
     if (id == null || id < 0) return;
 
-    this.selectedWorkerID.set(id);
-    this.selectedFlight.set(null);
+    this._selectedWorkerID.set(id);
+    this._selectedFlight.set(null);
     this.loadFlightsForWorker(id);
-
-    this.startCountdownTimer();
+    this.startAutoRefresh(id);
+    this.startCountdown();
   }
 
-  getSelectedWorkerID(): number | null {
-    return this.selectedWorkerID();
-  }
-
-  getFlightsList(): IFlight[] {
-    return this.flightsList();
-  }
-
-  getSelectedFlight(): IFlight | null {
-    return this.selectedFlight();
-  }
-
+  /** Sets the selected flight */
   setSelectedFlight(flight: IFlight | null): void {
-    this.selectedFlight.set(flight);
+    this._selectedFlight.set(flight);
+    console.log(' selected');
+
   }
 
-  getFlightInfo(num: string): IFlight | undefined {
-    if (!num) return undefined;
-    return this.flightsList().find(flight => flight.num === num);
-  }
-
-  /** Returns the current countdown in seconds */
-  getCountdown(): number {
-    return this.countdown();
-  }
-
-  /** Starts a 60-second timer and refreshes data every time it ends */
-  private startCountdownTimer(): void {
-    if (this.timerRef) {
-      clearInterval(this.timerRef);
-    }
-
-    this.countdown.set(60);
-
-    this.timerRef = setInterval(() => {
-      const current = this.countdown();
-      if (current <= 1) {
-        // refresh flights and reset timer
-        const id = this.selectedWorkerID();
-        if (id != null) {
-          this.loadFlightsForWorker(id);
-        }
-        this.countdown.set(60);
-      } else {
-        this.countdown.set(current - 1);
-      }
-    }, 1000);
-  }
-
-  /** Calls API to load flights of selected worker */
-  private loadFlightsForWorker(workerId: number): void {
+  /** Loads flight data for a worker */
+  loadFlightsForWorker(workerId: number): void {
     this.pullDataService.getFlightsByWorker(workerId).subscribe({
       next: (flights) => {
-        if (Array.isArray(flights)) {
-          this.flightsList.set(flights);
-          this.selectedFlight.set(flights[0] ?? null);
-        } else {
-          this.flightsList.set([]);
-          this.selectedFlight.set(null);
-        }
+        this._flightsList.set(flights);
+        this._selectedFlight.set(flights[0] ?? null);
+        console.log('now, ', this._countdown());
       },
       error: (err) => {
         console.error('Failed to load flights:', err);
-        this.flightsList.set([]);
-        this.selectedFlight.set(null);
+        this._flightsList.set([]);
+        this._selectedFlight.set(null);
       }
     });
   }
+
+  /** Starts a timer to refresh data every 60 seconds */
+  private startAutoRefresh(workerId: number): void {
+    this._refreshSub?.unsubscribe(); // Cleanup any previous subscription
+
+    this._refreshSub = timer(60000, 60000).subscribe(() => {
+      this.loadFlightsForWorker(workerId);
+    });
+  }
+
+  /** Starts countdown timer to track time remaining */
+private startCountdown(): void {
+  this._countdownSub?.unsubscribe(); // Cleanup any previous countdown
+
+  this._countdown.set(60); // Reset to 60 every time a new worker is selected
+
+  // Start countdown timer that ticks every second
+  this._countdownSub = timer(0, 1000).subscribe(() => {
+    const currentCountdown = this._countdown();
+    if (currentCountdown <= 0) {
+      this._countdown.set(60); // Just reset the countdown
+    } else {
+      this._countdown.set(currentCountdown - 1); // Decrement
+    }
+  });
+}
+
+  
 }
