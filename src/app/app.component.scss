@@ -1,10 +1,7 @@
 .app-wrapper {
     margin: 40px auto;
     padding: 32px;
-    // background-color: #ffffff;
-    // background: linear-gradient(180deg, #ffffff 90%, #4b87ff 10%);
     background: linear-gradient(110deg, #ffffff 60%, #4b87ff 40%);
-    // box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
     border-radius: 16px 16px 0 0;
     position: relative;
@@ -12,16 +9,14 @@
   }
   
   .app-wrapper-blue-bar {
-    // background-color: #007bff;
     background: linear-gradient(110deg, #ffffff 45%, #4b87ff 5%);
 
     height: 50px;
     max-width: 1200px;
     margin: 0 auto;
     border-radius: 0 0 16px 16px;
-    // box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     z-index: 0;
     position: relative;
-    top: -8px; /* optional: to visually tuck under the white if needed */
+    top: -8px;
   }
   

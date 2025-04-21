@@ -1,5 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Converts a number (minutes) into a human-readable duration.
+ * Example: 130 → "2h 10m"
+ */
 @Pipe({
   name: 'duration'
 })

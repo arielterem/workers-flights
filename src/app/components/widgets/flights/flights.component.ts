@@ -17,8 +17,7 @@ export class FlightsComponent {
     public appStateService: AppStateService
   ) { }
 
-
-  // Make columnDefs a signal
+  // Column definitions used for rendering the table header and data
   columnDefs = signal<Array<{ name: string, label: string }>>([
     { name: 'num', label: 'Flight Number' },
     { name: 'from', label: 'Origin' },
@@ -27,13 +26,11 @@ export class FlightsComponent {
     { name: 'to_date', label: 'Destination Date' }
   ]);
 
-  // Compute displayed columns using the 'name' property
+  // Dynamically compute the list of column field names to be used by the Angular Material table
   displayedColumns = computed(() => this.columnDefs().map(item => item.name));
-  // Method called when a row is clicked — sets the selected flight in the shared state
 
+  // Triggered when a user clicks on a row; updates the selected flight in the shared app state
   selectRow(flight: IFlight) {
     this.appStateService.setSelectedFlight(flight);
   }
-
-
 }

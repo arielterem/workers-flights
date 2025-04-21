@@ -19,8 +19,11 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./workers-list.component.scss']
 })
 export class WorkersListComponent implements OnInit, OnDestroy {
+  // List of workers to be displayed in the UI
   workersList: IWorker[] = [];
-  private subs = new Subscription();
+
+  // Holds all active timer subscriptions, such as auto-refresh and countdown
+  private timerSubs = new Subscription();
 
   constructor(
     public appStateService: AppStateService,
@@ -28,13 +31,16 @@ export class WorkersListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Load the initial list of workers on component initialization
     this.loadWorkers();
   }
 
   ngOnDestroy(): void {
-    this.subs.unsubscribe();
+    // Cleanup: unsubscribe from any running timers to prevent memory leaks
+    this.timerSubs.unsubscribe();
   }
 
+  // Fetches the list of workers from the server
   loadWorkers(): void {
     this.pullDataService.getWorkersList().subscribe({
       next: (res) => this.workersList = res,
@@ -42,26 +48,45 @@ export class WorkersListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Called when a worker is selected from the list
   onSelectWorker(id: number): void {
+    if (id == null) return; // Defensive check to avoid null or undefined IDs
+
+    // Save the selected worker ID in the application state
     this.appStateService.setSelectedWorkerID(id);
+
+    // Clear any previous timers to avoid duplication
+    this.cleanupTimers();
+
+    // Start periodic refresh for loading flights related to this worker
     this.startAutoRefresh(id);
+
+    // Start a countdown timer (for example, for showing time remaining)
     this.startCountdown();
   }
 
+  // Initializes a repeating timer to refresh the worker's flight data every 60 seconds
   private startAutoRefresh(workerId: number): void {
-    this.subs.add(
+    this.timerSubs.add(
       timer(60000, 60000).subscribe(() => {
         this.appStateService.loadFlightsForWorker(workerId);
       })
     );
   }
 
+  // Starts a countdown timer that ticks every second
   private startCountdown(): void {
     this.appStateService.resetCountdown();
-    this.subs.add(
+    this.timerSubs.add(
       timer(0, 1000).subscribe(() => {
         this.appStateService.decrementCountdown();
       })
     );
+  }
+
+  // Stops all existing timers and resets the subscription container
+  private cleanupTimers(): void {
+    this.timerSubs.unsubscribe();
+    this.timerSubs = new Subscription();
   }
 }

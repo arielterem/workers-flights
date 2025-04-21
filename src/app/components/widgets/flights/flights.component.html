@@ -1,34 +1,40 @@
 <div class="flights-container">
     <mat-card appearance="outlined" class="card-type-1">
-
-    @if(appStateService.flightsList().length == 0){
+  
+      <!-- Show message if no worker is selected or there are no flights -->
+      @if(appStateService.flightsList().length == 0){
         <div class="select-worker-tag">
-            <i class="pi pi-sparkles"></i> Select a worker
-          </div>
-
-    }
-    @else{
-
+          Select a worker
+        </div>
+      }
+  
+      @else{
+        <!-- Countdown indicator shows remaining seconds to next auto-refresh -->
         <div class="countdown-text">
-            Refreshing in {{ appStateService.countdown() }} sec.
-          </div>
-          
+          Refreshing in {{ appStateService.countdown() }} sec.
+        </div>
+  
+        <!-- Flights table rendered using Angular Material Table -->
         <div class="table-container">
-            <table mat-table [dataSource]="appStateService.flightsList()">
-               @for ( item of columnDefs(); track item.name){
-                <ng-container matColumnDef="{{item.name}}">
-                  <th mat-header-cell *matHeaderCellDef> {{item.label}} </th>
-                  <td mat-cell *matCellDef="let flight"> {{flight[item.name]}} </td>
-                </ng-container>
-               }
-    
-              <!-- Header + Row Rendering -->
-              <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns()" (click)="selectRow(row)"
-                  [class.selected]="row === appStateService.selectedFlight()">
-              </tr>
-            </table>
-    </div>
-    }
+          <table mat-table [dataSource]="appStateService.flightsList()">
+  
+            <!-- Generate columns dynamically based on columnDefs -->
+            @for (item of columnDefs(); track item.name) {
+              <ng-container matColumnDef="{{item.name}}">
+                <th mat-header-cell *matHeaderCellDef> {{item.label}} </th>
+                <td mat-cell *matCellDef="let flight"> {{flight[item.name]}} </td>
+              </ng-container>
+            }
+  
+            <!-- Table headers and rows binding -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns()"
+                (click)="selectRow(row)"
+                [class.selected]="row === appStateService.selectedFlight()">
+            </tr>
+          </table>
+        </div>
+      }
     </mat-card>
-</div>
+  </div>
+  
