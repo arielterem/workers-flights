@@ -1,4 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+    // background: linear-gradient(137deg, #fffafa, #add8e6);
+    // -webkit-background: linear-gradient(137deg, #add8e6, #fffafa);
+    // -moz-background: linear-gradient(137deg, #add8e6, #fffafa);
+    background-color: #cbd4dd !important;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// @keyframes gradientAnimation {
+//     0% {
+//         background-position: 0% 50%;
+//     }
+
+//     50% {
+//         background-position: 100% 50%;
+//     }
+
+//     100% {
+//         background-position: 0% 50%;
+
+//     }
+// }
+mat-card {
+    border: none !important;
+    background-color: #ffffff !important;
+    border-radius: 10px !important;
+    padding: 20px;
+    box-shadow: none;
+    margin: 10px;
+    box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-type-1{
+    height: 300px;
+}

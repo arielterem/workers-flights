@@ -1,0 +1,21 @@
+
+
+<mat-card
+  appearance="outlined"
+  class="card-type-1 worker-card"
+  [class.has-selection]="appStateService.getSelectedWorkerID()"
+>
+  <div class="worker-list">
+    <div
+      class="worker-item"
+      *ngFor="let worker of workersList"
+      [class.selected]="worker.id === appStateService.getSelectedWorkerID()"
+      (click)="onSelectWorker(worker.id)"
+    >
+      <i class="pi pi-user"></i>
+      <span class="worker-name">{{ worker.name }}</span>
+      <i class="pi pi-check check-icon" *ngIf="worker.id === appStateService.getSelectedWorkerID()"></i>
+    </div>
+  </div>
+</mat-card>
+

@@ -1,0 +1,80 @@
+.countdown-text {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: #666; /* soft gray */
+    opacity: 0.8;
+    margin: 0.5rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  
+.flights-container {
+    width: 100%;
+  }
+  
+  .full-width-table {
+    width: 100%;
+  }
+  
+  tr.selected {
+    background-color: #e3f2fd; /* Highlight selected row */
+  }
+  
+  .select-worker-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: 500;
+    color: #555;
+    background-color: #f9f9f9;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    margin: 1rem auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: 1.1rem;
+  }
+  
+  .select-worker-tag i.pi-sparkles {
+    margin-right: 0.5rem;
+    color: lightblue; /* Set sparkles icon to light blue */
+  }
+  
+  .flights-container mat-card {
+    max-height: 500px; /* or whatever height fits your layout */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .table-container {
+    flex: 1;
+    overflow-y: auto;
+  }
+  tr:hover {
+    cursor: pointer;
+  }
+  
+  
+  /* Optional: add borders or shadow for visual enhancement */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white; /* Ensure the table background is white */
+  }
+  
+  th.mat-header-cell {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f5f5f5;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  td.mat-cell, th.mat-header-cell {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+  }
+  

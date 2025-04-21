@@ -26,14 +26,14 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+              "src/favicon.ico",
+              "src/assets"
+            ],            
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": []
           },
@@ -71,7 +71,11 @@
               "buildTarget": "workers-flights:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
+          
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
@@ -86,14 +90,15 @@
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+              "src/favicon.ico",
+              "src/assets"
+            ]
+            ,
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": []
           }
