@@ -6,8 +6,7 @@ import {
 import { IWorker } from '../../../interfaces/worker.interface';
 import { AppStateService } from '../../../services/app-state.service';
 import { PullDataService } from '../../../services/pull-data.service';
-import { Subscription } from 'rxjs';
-import { effect } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
@@ -20,9 +19,8 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./workers-list.component.scss']
 })
 export class WorkersListComponent implements OnInit, OnDestroy {
-
   workersList: IWorker[] = [];
-  private refreshSub: Subscription | null = null;
+  private subs = new Subscription();
 
   constructor(
     public appStateService: AppStateService,
@@ -34,7 +32,7 @@ export class WorkersListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.refreshSub?.unsubscribe();
+    this.subs.unsubscribe();
   }
 
   loadWorkers(): void {
@@ -46,5 +44,24 @@ export class WorkersListComponent implements OnInit, OnDestroy {
 
   onSelectWorker(id: number): void {
     this.appStateService.setSelectedWorkerID(id);
+    this.startAutoRefresh(id);
+    this.startCountdown();
+  }
+
+  private startAutoRefresh(workerId: number): void {
+    this.subs.add(
+      timer(60000, 60000).subscribe(() => {
+        this.appStateService.loadFlightsForWorker(workerId);
+      })
+    );
+  }
+
+  private startCountdown(): void {
+    this.appStateService.resetCountdown();
+    this.subs.add(
+      timer(0, 1000).subscribe(() => {
+        this.appStateService.decrementCountdown();
+      })
+    );
   }
 }
